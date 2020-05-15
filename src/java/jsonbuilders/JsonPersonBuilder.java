@@ -7,16 +7,17 @@ package jsonbuilders;
 
 import entity.Person;
 import javax.json.Json;
+import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 
 /**
  *
- * @author Irina
+ * @author JVM
  */
 public class JsonPersonBuilder {
 
-    JsonValue createJsonPersonObject(Person person) {
+    public JsonObject createJsonPersonObject(Person person) {
         JsonObjectBuilder job = Json.createObjectBuilder();
         job.add("id",person.getId())
                 .add("firstname", person.getFirstname())

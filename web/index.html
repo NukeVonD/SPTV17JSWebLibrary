@@ -12,13 +12,13 @@
             <div class="row nav text-light w-100 bg-primary d-flex justify-content-between">
                 <p class="nav nav-link">Сетевая библиотека</p>
                 <ul class="nav nav-item d-flex justify-content-end ">
-                    <li class="nav-item">
-                      <a class="nav-link  text-light"  href="#">Active</a>
+                    <li id="printNewBookForm" class="nav-item" style="display: none;">
+                      <a class="nav-link  text-light"  href="#" >Добавить книгу</a>
                     </li>
-                    <li class="nav-item">
-                      <a class="nav-link text-light"  href="#">Link</a>
+                    <li id="printListBooksForm" class="nav-item" style="display: none;" >
+                      <a class="nav-link text-light"  href="#" >Список книг</a>
                     </li>
-                    <li id="sysout" class="nav-item">
+                    <li id="sysout" class="nav-item" style="display: none;">
                       <a  class="nav-link text-light" href="#">Выход</a>
                     </li>
                     <li id="enter-menu" class="nav-item">
@@ -26,7 +26,7 @@
                     </li>
                 </ul>
             </div>
-            <div id="info" class="w-100 text-center"></div>
+            <div id="info" class="w-100 text-center text-danger"></div>
             <div id="content"></div>
         </div>
         <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>

@@ -1,16 +1,18 @@
-//asdasd
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 package servlets;
 
+import entity.Book;
 import entity.Person;
 import entity.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.List;
 import javax.ejb.EJB;
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -22,24 +24,28 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import jsonbuilders.JsonBookBuilder;
 import jsonbuilders.JsonUserBuilder;
+import session.BookFacade;
 import session.PersonFacade;
 import session.UserFacade;
 import util.EncryptPass;
 
 /**
  *
- * @author Irina
+ * @author JVM
  */
 @WebServlet(name = "LoginController", urlPatterns = {
     "/createUser", 
     "/login", 
     "/logout",
+    "/listBooks",
     
 })
 public class LoginController extends HttpServlet {
 @EJB private PersonFacade personFacade;
 @EJB private UserFacade userFacade;
+@EJB private BookFacade bookFacade;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -52,6 +58,7 @@ public class LoginController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
         String json = "";
         JsonObjectBuilder job = Json.createObjectBuilder();
         EncryptPass ep = new EncryptPass();
@@ -63,11 +70,11 @@ public class LoginController extends HttpServlet {
                 String firstname = jsonObject.getString("firstname");
                 String lastname = jsonObject.getString("lastname");
                 String email = jsonObject.getString("email");
-                String money = jsonObject.getString("money");
                 String city = jsonObject.getString("city");
                 String street = jsonObject.getString("street");
                 String house = jsonObject.getString("house");
                 String room = jsonObject.getString("room");
+                String money = jsonObject.getString("money");
                 String login = jsonObject.getString("login");
                 String password = jsonObject.getString("password");
                 // -------- проверка на null и на "" ---------
@@ -99,7 +106,7 @@ public class LoginController extends HttpServlet {
                 Person person = null;
                 User user = null;
                 try {// защищаем запись в базу от возможных ошибок
-                    person = new Person(firstname, lastname, email, city, street, house, room);
+                    person = new Person(firstname, lastname, email, city, street, house, room, Integer.parseInt(money));
                     personFacade.create(person);
                     String salts = ep.createSalts();
                     password = ep.setEncriptPass(password, salts);
@@ -189,8 +196,31 @@ public class LoginController extends HttpServlet {
                     }
                 break;
             case "/logout":
-                
+                session = request.getSession(false);
+                if(session != null){
+                    session.invalidate();
+                }
+                job.add("actionStatus", "true")
+                            .add("user","null")
+                            .add("authStatus", "false")
+                            .add("data", "null");
+                try (Writer writer = new StringWriter()){
+                    Json.createWriter(writer).write(job.build());
+                    json = writer.toString();
+                }
                 break;
+            case "/listBooks":    
+                List<Book> listBooks = bookFacade.findAll();
+                JsonBookBuilder jbb = new JsonBookBuilder();
+                job.add("actionStatus", "true")
+                            .add("user","null")
+                            .add("authStatus", "true")
+                            .add("data", jbb.createJsonListBooks(listBooks));
+                try (Writer writer = new StringWriter()){
+                    Json.createWriter(writer).write(job.build());
+                    json = writer.toString();
+                }
+                break;    
         }
         // Отлавливаем json переменную, проверяем содержание 
         // и если оно есть, отправляем клиенту

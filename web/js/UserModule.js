@@ -1,4 +1,4 @@
-//asdasd
+
 import {httpModule} from './HttpModule.js';
 class UserModule{
     printRegistrationForm(){
